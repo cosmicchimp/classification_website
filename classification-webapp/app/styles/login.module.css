@@ -1,0 +1,50 @@
+.loginWrapper {
+    font-family:monospace;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    padding:1rem;
+}
+.loginForm {
+    width:40%;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    gap:1rem;
+    padding:4rem 2rem;
+    background-color: rgba(191, 96, 231, 0.676);
+    border-radius: 20px;
+    color:#ffffff;
+}
+.input {
+    width: 50%;
+    border-radius: 10px;
+    border-width: 1.2px;
+    height:1.3rem;
+    padding:.5rem;
+    background-color: rgb(198, 108, 237);
+
+    color:black;
+    font-family: monospace;
+    border:none;
+
+}
+
+::placeholder {
+    color: black;
+    font-weight:550;
+    font-family: monospace;
+}
+.loginButton {
+    padding:.5rem;
+    width:33%;
+    border-radius:10px;
+    border:none;
+}
+.loginForm > p > a, .loginForm > p {
+    color:black;
+    font-size:1rem;
+}
+.title {
+    color:black;
+}
