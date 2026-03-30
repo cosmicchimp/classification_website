@@ -4,14 +4,15 @@ import styles from "@styles/signup.module.css"
 export default function Signup() {
     return (
         <>
-        <HeaderComponent/>
+        <HeaderComponent isAuthenticated={false}/>
         <div className={styles.signupWrapper}>
+            <h1 className={styles.title}>Create your account</h1>
             <div className={styles.signupForm}>
-                <h1 className={styles.title}>Create an account</h1>
                 <input type="text" className={styles.input} placeholder="Email"></input>
                 <input type="password" className={styles.input} placeholder="Password"></input>
                 <input type="password" className={styles.input} placeholder="Confirm password"></input>
                 <button className={styles.signupButton}>Signup</button>
+                <Link href="/login">Return to login</Link>
             </div>
         </div>
         </>

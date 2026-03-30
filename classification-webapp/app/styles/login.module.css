@@ -10,24 +10,24 @@
     display:flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap:1rem;
     padding:4rem 2rem;
-    background-color: rgba(191, 96, 231, 0.676);
+    background-color: rgba(191, 96, 231, 0);
     border-radius: 20px;
     color:#ffffff;
 }
 .input {
-    width: 50%;
+    width: clamp(8rem, 30vw, 16rem);
     border-radius: 10px;
     border-width: 1.2px;
     height:1.3rem;
     padding:.5rem;
     background-color: rgb(198, 108, 237);
-
     color:black;
     font-family: monospace;
-    border:none;
-
+    border:black 1px solid;
+    box-shadow:1px 2px 2px grey;
 }
 
 ::placeholder {
@@ -38,8 +38,14 @@
 .loginButton {
     padding:.5rem;
     width:33%;
-    border-radius:10px;
+    border-radius:6px;
     border:none;
+    box-shadow:1px 1px 1px grey;
+    transition: transform ease-in-out 100ms;
+    font-weight:600;
+}
+.loginButton:active {
+    transform:scale(.97)
 }
 .loginForm > p > a, .loginForm > p {
     color:black;
@@ -47,4 +53,8 @@
 }
 .title {
     color:black;
+    font-size:4rem;
+    margin:0;
+    padding-top:2rem;
+    text-align: center;
 }

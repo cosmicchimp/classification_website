@@ -2,13 +2,13 @@
     background-color: rgba(0, 0, 0, 0.904);
     display:flex;
     justify-content: space-between;
-    padding:1rem 3rem;
+    padding:0 1rem 0 1rem;
 }
 
 .title {
     color:white;
     font-weight:700;
-    letter-spacing:10px;
+    letter-spacing:2px;
 }
 .linkList {
     display:flex;

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Bitcount_Grid_Double} from "next/font/google";
+import {Roboto_Slab} from "next/font/google";
 import "./globals.css";
 
-const bitcount = Bitcount_Grid_Double({
+const bitcount = Roboto_Slab({
   subsets: ["latin"],
 });
 
