@@ -4,7 +4,7 @@ import HeaderComponent from "./components/Header";
 export default function LandingPage() {
   return (
     <>
-    <HeaderComponent/>
+    <HeaderComponent isAuthenticated={false}/>
     <div className={styles.landingWrapper}>
         <h1 className={styles.title}>Welcome to AnimalScan!</h1>
         <p className={styles.description}>This is a website built in TypeScript and NextJS, hosted through AWS, and attached to a Python backend server that hosts the pre-trained CNN classification model.</p>  
