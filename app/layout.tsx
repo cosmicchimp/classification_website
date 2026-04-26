@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import {Roboto_Slab} from "next/font/google";
+import { AuthProvider } from "./auth/AuthProvider";
 import "./globals.css";
 
 const bitcount = Roboto_Slab({
@@ -18,10 +19,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <AuthProvider>
     <html lang="en">
       <body className={`${bitcount.className}`}>
         {children}
       </body>
     </html>
+    </AuthProvider>
   );
 }
