@@ -2,7 +2,9 @@
 import InsertScan from "@/app/components/DAO/InsertScan"
 export async function POST(req) {
   const scanData =  {
-    
+    result:"",
+    confidence:"",
+    scan_creator:"",
   }
   const insertion = await InsertScan(scanData)
   return new Response("Upload successful", { status: 200 })
