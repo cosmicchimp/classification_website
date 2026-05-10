@@ -110,3 +110,11 @@
     align-self: flex-start;
   }
 }
+
+.passwordRequirement {
+  margin-top: -0.25rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
