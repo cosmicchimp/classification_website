@@ -42,7 +42,7 @@ export default function Login() {
         setError(loginInfo.message || "Invalid email or password.")
         return
       }
-      login(email)
+      login(email, loginInfo.userID)
       router.replace("/scan")
     } catch (e) {
       console.error("Login error:", e)

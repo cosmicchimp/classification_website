@@ -1,0 +1,112 @@
+.homeWrapper {
+  min-height: 100vh;
+  background: #f5f6f8;
+}
+
+.profileContent {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.scanCard {
+  background: white;
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.scanHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.scanHeader h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #111827;
+}
+
+.scanHeader p {
+  margin: 0.25rem 0 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.scanCount {
+  background: #eef2ff;
+  color: #3730a3;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.statusText {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.scanList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.scanItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 14px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+.scanInfo h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 1.05rem;
+  text-transform: capitalize;
+}
+
+.scanInfo p {
+  margin: 0.25rem 0 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.confidenceBadge {
+  background: #ecfdf5;
+  color: #047857;
+  font-weight: 700;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .scanHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .scanItem {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .confidenceBadge {
+    align-self: flex-start;
+  }
+}

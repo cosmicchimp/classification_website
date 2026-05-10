@@ -11,6 +11,6 @@ export default async function ReadAccount(props: {
     user = select[0]
     let passwordValidity = await compare(props.userInfo.password, user.password)
     const userInfo = {valid:passwordValidity, username:props.userInfo.email}
-    return userInfo
+    return {success:true, ID:user.id}
 }
 }

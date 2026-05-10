@@ -1,72 +1,134 @@
-'use client'
+"use client";
 
-import styles from "@styles/scan.module.css"
-import HeaderComponent from "../components/Header"
-import { useState } from "react"
+import styles from "@styles/scan.module.css";
+import HeaderComponent from "../components/Header";
+import { useState } from "react";
+
+type Prediction = {
+  result: string;
+  confidence: number;
+};
 
 export default function Home() {
-  const [imageFile, setImageFile] = useState(null)
-  const [prediction, setPrediction] = useState(null)
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [prediction, setPrediction] = useState<Prediction | null>(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const MAX_FILE_SIZE_MB = 5
-  const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
-  const allowedTypes = ["image/jpeg", "image/png", "image/webp"]
+  const MAX_FILE_SIZE_MB = 5;
+  const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
-  function handleImageChange(e) {
-    const file = e.target.files[0]
-    setError("")
-    setPrediction(null)
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
-    if (!file) return
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+
+    setError("");
+    setPrediction(null);
+
+    if (!file) {
+      setImageFile(null);
+      return;
+    }
 
     if (!allowedTypes.includes(file.type)) {
-      setError("Please upload a JPG, PNG, or WebP image.")
-      setImageFile(null)
-      return
+      setError("Please upload a JPG, PNG, or WebP image.");
+      setImageFile(null);
+      return;
     }
 
     if (file.size > MAX_FILE_SIZE_BYTES) {
-      setError(`Image must be under ${MAX_FILE_SIZE_MB}MB.`)
-      setImageFile(null)
-      return
+      setError(`Image must be under ${MAX_FILE_SIZE_MB}MB.`);
+      setImageFile(null);
+      return;
     }
 
-    setImageFile(file)
+    setImageFile(file);
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault()
-    setError("")
-    setPrediction(null)
+  async function classifyImage(file: File): Promise<Prediction> {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const res = await fetch("https://classification-python-api.onrender.com/classify", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) {
+      throw new Error(`Image classification failed. Status: ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    if (
+      !data ||
+      typeof data.result !== "string" ||
+      typeof data.confidence !== "number"
+    ) {
+      throw new Error("Invalid classification response shape.");
+    }
+
+    return {
+      result: data.result,
+      confidence: data.confidence,
+    };
+  }
+
+  async function saveScan(scanData: Prediction) {
+    const userID = localStorage.getItem("userID");
+
+    if (!userID) {
+      throw new Error("No userID found in localStorage.");
+    }
+
+    const res = await fetch("/api/save-scan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        result: scanData.result,
+        confidence: scanData.confidence,
+        ID: Number(userID),
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to save scan. Status: ${res.status}`);
+    }
+
+    const saveResponse = await res.json();
+    return saveResponse;
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    setError("");
+    setPrediction(null);
 
     if (!imageFile) {
-      setError("Please select an image first.")
-      return
+      setError("Please select an image first.");
+      return;
     }
 
     try {
-      setLoading(true)
+      setLoading(true);
 
-      const formData = new FormData()
-      formData.append("image", imageFile)
+      const classifiedData = await classifyImage(imageFile);
 
-      const res = await fetch("http://localhost:8000/classify", {
-        method: "POST",
-        body: formData,
-      })
+      setPrediction(classifiedData);
 
-      if (!res.ok) {
-        throw new Error("Image classification failed.")
-      }
-      const data = await res.json()
-      
-      setPrediction(data)
+      const saveResponse = await saveScan(classifiedData);
+
+      console.log("Scan saved successfully:", saveResponse);
     } catch (err) {
-      setError("Something went wrong while analyzing the image.")
+      console.error("Scan submission error:", err);
+
+      setError("Something went wrong while analyzing or saving the image.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -77,7 +139,11 @@ export default function Home() {
       <main className={styles.uploadSection}>
         <form onSubmit={handleSubmit} className={styles.uploadCard}>
           <h2>Animal Classifier</h2>
-          <p>Upload an animal photo (only JPEG, JPG, PNG) and the model will return its best prediction.</p>
+
+          <p>
+            Upload an animal photo. The model will return its best prediction
+            and save the result to your scan history.
+          </p>
 
           <input
             type="file"
@@ -92,7 +158,11 @@ export default function Home() {
 
           {error && <p className={styles.errorText}>{error}</p>}
 
-          <button type="submit" className={styles.submitButton} disabled={loading}>
+          <button
+            type="submit"
+            className={styles.submitButton}
+            disabled={loading}
+          >
             {loading ? "Analyzing..." : "Submit Image"}
           </button>
 
@@ -102,7 +172,7 @@ export default function Home() {
 
               <div className={styles.resultRow}>
                 <span>Prediction</span>
-                <strong>{prediction.label}</strong>
+                <strong>{prediction.result}</strong>
               </div>
 
               <div className={styles.resultRow}>
@@ -113,7 +183,9 @@ export default function Home() {
               <div className={styles.confidenceBar}>
                 <div
                   className={styles.confidenceFill}
-                  style={{ width: `${prediction.confidence * 100}%` }}
+                  style={{
+                    width: `${prediction.confidence * 100}%`,
+                  }}
                 />
               </div>
             </section>
@@ -121,5 +193,5 @@ export default function Home() {
         </form>
       </main>
     </div>
-  )
+  );
 }

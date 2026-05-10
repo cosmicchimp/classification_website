@@ -8,9 +8,9 @@ export async function POST(req: Request) {
     const value = await ReadAccount({
       userInfo: userInfo
     })
-    if (value) {
+    if (value.success) {
       console.log("Log in successful")
-      return Response.json({success:true}, {status:200})
+      return Response.json({success:true, userID:value.ID}, {status:200})
     }
     else {
       console.log("Log in failed")
