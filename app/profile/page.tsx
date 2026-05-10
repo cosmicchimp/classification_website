@@ -3,6 +3,8 @@
 import styles from "@styles/profile.module.css";
 import HeaderComponent from "../components/Header";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../auth/AuthProvider";
 
 type Scan = {
   scan_id: number;
@@ -13,19 +15,34 @@ type Scan = {
 };
 
 export default function Home() {
+  const router = useRouter();
+  const { authenticated } = useAuth();
+
   const [scans, setScans] = useState<Scan[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!authenticated) {
+      router.replace("/login");
+      return;
+    }
+
     async function fetchScans() {
       try {
+        const userID = localStorage.getItem("userID");
+
+        if (!userID) {
+          router.replace("/login");
+          return;
+        }
+
         const scanRequest = await fetch("/api/fetch-scans", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            ID: localStorage.getItem("userID"),
+            ID: userID,
           }),
         });
 
@@ -47,7 +64,11 @@ export default function Home() {
     }
 
     fetchScans();
-  }, []);
+  }, [authenticated, router]);
+
+  if (!authenticated) {
+    return null;
+  }
 
   return (
     <div className={styles.homeWrapper}>
@@ -70,36 +91,39 @@ export default function Home() {
             <p className={styles.statusText}>No scans found.</p>
           ) : (
             <ul className={styles.scanList}>
-{scans.map((scan) => {
-  const confidencePercent = (Number(scan.confidence) * 100).toFixed(2);
+              {scans.map((scan) => {
+                const confidencePercent = (
+                  Number(scan.confidence) * 100
+                ).toFixed(2);
 
-  const rawDate = new Date(scan.date_created);
+                const rawDate = new Date(scan.date_created);
 
-  const mountainAdjustedDate = new Date(
-    rawDate.getTime() - 6 * 60 * 60 * 1000
-  );
+                const mountainAdjustedDate = new Date(
+                  rawDate.getTime() - 6 * 60 * 60 * 1000
+                );
 
-  const formattedDate = mountainAdjustedDate.toLocaleString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+                const formattedDate =
+                  mountainAdjustedDate.toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                  });
 
-  return (
-    <li key={scan.scan_id} className={styles.scanItem}>
-      <div className={styles.scanInfo}>
-        <h3>{scan.result}</h3>
-        <p>{formattedDate} MT</p>
-      </div>
+                return (
+                  <li key={scan.scan_id} className={styles.scanItem}>
+                    <div className={styles.scanInfo}>
+                      <h3>{scan.result}</h3>
+                      <p>{formattedDate} MT</p>
+                    </div>
 
-      <div className={styles.confidenceBadge}>
-        {confidencePercent}%
-      </div>
-    </li>
-  );
-})}
+                    <div className={styles.confidenceBadge}>
+                      {confidencePercent}%
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </section>
